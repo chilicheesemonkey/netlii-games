@@ -94,6 +94,11 @@
     "imgSrc": "projects/brick-game/images/icon.png",
     "title": "Brick Game (brick.game)"
   },
+ {
+    "link": "projects/BR0WS3R/index.html",
+    "imgSrc": "projects/BR0WS3R/browser.png",
+    "title": "BR0WS3R (IN)"
+  },
   {
     "link": "projects/btts/index.html",
     "imgSrc": "projects/btts/images.png",
