@@ -440,6 +440,11 @@
     "imgSrc": "projects/missiles/miss.png",
     "title": "Missiles"
   },
+   {
+    "link": "projects/monkeymart/index.html",
+    "imgSrc": "projects/monkeymart/monkey-mart-f180x180.png",
+    "title": "Monkey mart"
+  },
   {
     "link": "projects/motox3m/index.html",
     "imgSrc": "projects/motox3m/splash.jpg",
