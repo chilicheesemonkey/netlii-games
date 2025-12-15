@@ -621,6 +621,11 @@
     "title": "Slope"
   },
   {
+    "link": "projects/slowroads/index.html",
+    "imgSrc": "projects/slowroads/header.jpg",
+    "title": "Slow roads"
+  },
+  {
     "link": "projects/sm64/index.html",
     "imgSrc": "projects/sm64/logo.png",
     "title": "Super Mario 64"
