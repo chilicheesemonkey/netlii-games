@@ -15,6 +15,11 @@
     "title": "2048"
   },
   {
+    "link": "projects/400in1/index.html",
+    "imgSrc": "projects/400in1/sgb.png",
+    "title": "Sup Game Box (fc 400)"
+  },
+  {
     "link": "projects/9007199254740992/index.html",
     "imgSrc": "projects/9007199254740992/logo-4.png",
     "title": "9007199254740992"
