@@ -280,6 +280,11 @@
     "title": "Doodle Jump"
   },
   {
+    "link": "projects/doom/index.html",
+    "imgSrc": "projects/doom/Doom.jpg",
+    "title": "Doom (MS-Dos)"
+  },
+  {
     "link": "projects/doublewires/index.html",
     "imgSrc": "projects/doublewires/doublewires.png",
     "title": "Double Wires"
