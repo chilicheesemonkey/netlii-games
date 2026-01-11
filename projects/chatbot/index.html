@@ -1,111 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>In-Browser AI Chat</title>
+    <title>Smart AI Assistant</title>
     <style>
-        body { font-family: -apple-system, system-ui, sans-serif; background: #f4f4f9; display: flex; justify-content: center; padding: 20px; }
-        #chat-container { width: 100%; max-width: 600px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; height: 80vh; }
-        #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        #status { font-size: 12px; color: #666; padding: 10px 20px; background: #fafafa; border-bottom: 1px solid #eee; }
-        .msg { padding: 12px 16px; border-radius: 18px; max-width: 85%; line-height: 1.5; font-size: 15px; }
-        .user { background: #007bff; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .bot { background: #f1f0f0; color: #222; align-self: flex-start; border-bottom-left-radius: 2px; }
-        #input-area { display: flex; padding: 15px; border-top: 1px solid #eee; }
-        input { flex: 1; border: 1px solid #ddd; padding: 12px; border-radius: 8px; outline: none; margin-right: 10px; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        :root { --primary: #6200EA; --bg: #f8f9fa; }
+        body { margin: 0; font-family: 'Roboto', sans-serif; background-color: var(--bg); }
+        .app-container { max-width: 600px; margin: 20px auto; height: 90vh; display: flex; flex-direction: column; background: white; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        .chat-header { background: var(--primary); color: white; padding: 20px; text-align: center; font-size: 20px; font-weight: 500; }
+        #chat-window { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #fff; }
+        .bubble { padding: 12px 16px; border-radius: 18px; font-size: 14px; max-width: 80%; line-height: 1.5; position: relative; }
+        .user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .ai { align-self: flex-start; background: #f1f3f4; color: #202124; border-bottom-left-radius: 4px; }
+        .ai img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+        .input-bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
+        input { flex: 1; padding: 12px 20px; border: 1px solid #dfe1e5; border-radius: 24px; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.1); }
+        button { background: var(--primary); border: none; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         button:disabled { background: #ccc; }
+        #status { font-size: 11px; text-align: center; color: #70757a; padding: 5px; }
     </style>
 </head>
 <body>
 
-<div id="chat-container">
-    <div id="status">Initializing engine... (Check console)</div>
-    <div id="messages">
-        <div class="msg bot">Hello! Once the model loads, I'll be ready to chat.</div>
-    </div>
-    <div id="input-area">
-        <input type="text" id="user-input" placeholder="Loading AI..." disabled>
-        <button id="send-btn" disabled>Send</button>
+<div class="app-container">
+    <div class="chat-header">Pico Smart Assistant</div>
+    <div id="status">System Ready</div>
+    <div id="chat-window"></div>
+    <div class="input-bar">
+        <input type="text" id="userInput" placeholder="Ask anything or use /image..." autocomplete="off">
+        <button id="sendBtn"><i class="material-icons">send</i></button>
     </div>
 </div>
 
-<script type="module">
-    // Import the WebLLM engine from a CDN
-    import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+<script>
+    const chatWindow = document.getElementById('chat-window');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const status = document.getElementById('status');
 
-    const statusDiv = document.getElementById('status');
-    const inputField = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
-    const messagesDiv = document.getElementById('messages');
+    // 1. Official Pico Endpoint & Key
+    const PICO_PK = "v1-Z0FBQUFBQm5HUEtMSjJkakVjcF9IQ0M0VFhRQ0FmSnNDSHNYTlJSblE0UXo1Q3RBcjFPcl9YYy1OZUhteDZWekxHdWRLM1M1alNZTkJMWEhNOWd4S1NPSDBTWC12M0U2UGc9PQ==";
+    const LLM_URL = `https://backend.buildpicoapps.com/aero/run/llm-api?pk=${PICO_PK}`;
+    const IMG_URL = `https://backend.buildpicoapps.com/aero/run/image-generation-api?pk=${PICO_PK}`;
 
-    // Configuration: We'll use the Llama-3.2-1B model
-    const selectedModel = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
-    let engine;
-
-    async function initChat() {
-        try {
-            // Create the engine and set a callback to show loading progress
-            engine = await webllm.CreateMLCEngine(selectedModel, {
-                initProgressCallback: (report) => {
-                    statusDiv.innerText = report.text;
-                }
-            });
-
-            statusDiv.innerText = "AI Ready (Local)";
-            inputField.disabled = false;
-            sendBtn.disabled = false;
-            inputField.placeholder = "Type your message...";
-        } catch (err) {
-            statusDiv.innerText = "Error: " + err.message;
-            console.error(err);
-        }
-    }
-
-    window.sendMessage = async () => {
-        const text = inputField.value.trim();
-        if (!text) return;
-
-        addMessage(text, 'user');
-        inputField.value = '';
-        inputField.disabled = true;
-
-        const botMsgDiv = addMessage("...", 'bot');
-        
-        // Generate the response
-        let fullResponse = "";
-        const chunks = await engine.chat.completions.create({
-            messages: [{ role: "user", content: text }],
-            stream: true, // This makes the text appear as it's being "thought"
-        });
-
-        for await (const chunk of chunks) {
-            const content = chunk.choices[0]?.delta?.content || "";
-            fullResponse += content;
-            botMsgDiv.innerText = fullResponse;
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        inputField.disabled = false;
-        inputField.focus();
-    };
-
-    function addMessage(text, sender) {
+    function addBubble(content, isUser, isImage = false) {
         const div = document.createElement('div');
-        div.className = `msg ${sender}`;
-        div.innerText = text;
-        messagesDiv.appendChild(div);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        div.className = `bubble ${isUser ? 'user' : 'ai'}`;
+        if (isImage) {
+            const img = document.createElement('img');
+            img.src = content;
+            div.appendChild(img);
+        } else {
+            div.textContent = content;
+        }
+        chatWindow.appendChild(div);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
         return div;
     }
 
-    // Attach event listeners
-    sendBtn.onclick = window.sendMessage;
-    inputField.onkeypress = (e) => { if (e.key === 'Enter') window.sendMessage(); };
+    async function callAI() {
+        const prompt = userInput.value.trim();
+        if (!prompt) return;
 
-    // Start loading the model immediately
-    initChat();
+        addBubble(prompt, true);
+        userInput.value = '';
+        sendBtn.disabled = true;
+        const aiBubble = addBubble("Thinking...", false);
+
+        try {
+            // LAYER 1: Official PicoApps Logic
+            status.textContent = "Connecting to Pico Cloud...";
+            const isImageRequest = prompt.toLowerCase().startsWith('/image');
+            const targetUrl = isImageRequest ? IMG_URL : LLM_URL;
+
+            const response = await fetch(targetUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: isImageRequest ? prompt.replace('/image', '').trim() : prompt })
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                if (isImageRequest) {
+                    aiBubble.textContent = "Generated Image:";
+                    addBubble(data.imageUrl, false, true);
+                } else {
+                    aiBubble.textContent = data.text;
+                }
+                status.textContent = "Response Received";
+            } else {
+                throw new Error("Pico Busy");
+            }
+
+        } catch (err) {
+            // LAYER 2: High-Stability Failover (If Pico is Congested)
+            status.textContent = "Switching to Backup Route...";
+            try {
+                const fallback = await fetch(`https://api.paxsenix.biz.id/ai/gpt4?text=${encodeURIComponent(prompt)}`);
+                const fallbackData = await fallback.json();
+                aiBubble.textContent = fallbackData.message || fallbackData.result || "Service is currently under high load.";
+            } catch (e) {
+                aiBubble.textContent = "Offline Mode: I am currently unable to reach the cloud. Please check your connection.";
+            }
+        } finally {
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+    }
+
+    sendBtn.onclick = callAI;
+    userInput.onkeypress = (e) => { if (e.key === 'Enter') callAI(); };
 </script>
 
 </body>
