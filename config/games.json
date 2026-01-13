@@ -371,6 +371,11 @@
     "title": "Flappy 2048"
   },
   {
+    "link": "projects/ftc/index.html",
+    "imgSrc": "projects/ftc/ftc.webp",
+    "title": "Fleeing the complex"
+  },
+  {
     "link": "projects/flappy-bird/index.html",
     "imgSrc": "projects/flappy-bird/assets/thumb.png",
     "title": "Flappy Bird"
