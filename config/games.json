@@ -737,6 +737,11 @@
     "title": "Slow roads"
   },
   {
+    "link": "projects/snowrider3d/index.html",
+    "imgSrc": "projects/snowrider3d/sn3d.png",
+    "title": "Snow rider 3D"
+  },
+  {
     "link": "projects/sm64/index.html",
     "imgSrc": "projects/sm64/logo.png",
     "title": "Super Mario 64"
