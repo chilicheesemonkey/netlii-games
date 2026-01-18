@@ -892,6 +892,11 @@
     "title": "Toss The Turtle"
   },
   {
+    "link": "projects/trickyball/index.html",
+    "imgSrc": "projects/trickyball/trickyball.png",
+    "title": "Tricky Ball"
+  },
+  {
     "link": "projects/tube-jumpers/index.html",
     "imgSrc": "projects/tube-jumpers/img/shark.jpg",
     "title": "Tube Jumpers"
