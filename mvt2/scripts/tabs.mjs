@@ -51,7 +51,7 @@ pageRefresh.onclick = () => {
 };
 
 newTabButton.onclick = () => {
-  addTab("uvsearch.rhw.one");
+  addTab("netlii.pages.dev/movies");
 };
 
 // Options (opt menu)
@@ -248,7 +248,7 @@ async function addTab(link) {
   focusTab(tab);
 }
 
-addTab("bubber.pages.dev/movies/");
+addTab("netlii.pages.dev/movies/");
 
 const urlParams = new URLSearchParams(window.location.search);
 
