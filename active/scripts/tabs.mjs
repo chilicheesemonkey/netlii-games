@@ -51,7 +51,7 @@ pageRefresh.onclick = () => {
 };
 
 newTabButton.onclick = () => {
-  addTab("google.com");
+  addTab("html.duckduckgo.com/html");
 };
 
 // Options (opt menu)
@@ -133,7 +133,7 @@ const tabItem = (tab) => {
             if (tabs.length) focusTab(tabs[tabs.length - 1]);
             else
               setTimeout(() => {
-                addTab("google.com");
+                addTab("html.duckduckgo.com/html");
               }, 100);
           }
 
@@ -248,7 +248,7 @@ async function addTab(link) {
   focusTab(tab);
 }
 
-addTab("google.com");
+addTab("html.duckduckgo.com/html");
 
 const urlParams = new URLSearchParams(window.location.search);
 
