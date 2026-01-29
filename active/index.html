@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NETLII | Pro Browser</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <script src="check.js" defer></script>
+    <script defer src="scripts/lstimer.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.2.nomodule.min.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="uv/uv.bundle.js" defer></script>
+    <script src="uv/uv.config.js" defer></script>
+    <script src="scripts/tabs.mjs" type="module" defer></script>
+
+    <style>
+      :root {
+        --glass: rgba(255, 255, 255, 0.5);
+        --border: rgba(255, 255, 255, 0.3);
+        --accent: #000;
+        --sidebar-width: 280px;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Nunito', sans-serif;
+        background: url('netlii-bg.avif') no-repeat center center fixed;
+        background-size: cover;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+      }
+
+      /* CLEANER SIDEBAR */
+      .sidebar {
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        padding: 25px 15px;
+        box-sizing: border-box;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 100;
+      }
+
+      /* PILL CONTROLS */
+      .nav-group {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        justify-content: center;
+      }
+
+      .btn-circle {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1.5px solid var(--accent);
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+        color: var(--accent);
+      }
+
+      .btn-circle:hover {
+        background: var(--accent);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      /* SEARCH BOX */
+      .search-wrapper {
+        margin-bottom: 25px;
+      }
+
+      #url-input {
+        width: 100%;
+        height: 44px;
+        border-radius: 50px;
+        border: 2px solid var(--accent);
+        padding: 0 20px;
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 0.95rem;
+        outline: none;
+        transition: box-shadow 0.2s;
+      }
+
+      #url-input:focus {
+        box-shadow: 0 0 0 4px rgba(0,0,0,0.05);
+      }
+
+      /* IMPROVED TAB ITEMS */
+      #tab-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 5px;
+      }
+
+      .tab-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: 0.2s;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .tab-item:hover {
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      .tab-item.selectedTab {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      }
+
+      #new-tab {
+        width: 100%;
+        padding: 12px;
+        border-radius: 50px;
+        border: none;
+        background: var(--accent);
+        color: white;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      /* MAIN VIEWPORT */
+      .main-view {
+        flex-grow: 1;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      .tab-frame {
+        width: 100%;
+        height: 100%;
+        border-radius: 25px;
+        border: 2px solid var(--accent);
+        background: white;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      }
+
+      /* OVERLAY MENU */
+      #menu-overlay {
+        position: fixed;
+        top: 80px;
+        left: 20px;
+        width: 240px;
+        background: white;
+        border: 2px solid var(--accent);
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        display: none;
+        z-index: 200;
+      }
+
+      #menu-overlay.active { display: block; }
+
+      .option {
+        padding: 10px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .option:hover { background: #f0f0f0; }
+
+      /* SCROLLBAR */
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+    </style>
+  </head>
+
+  <body>
+    <aside class="sidebar">
+      <div class="nav-group">
+        <button class="btn-circle" onclick="window.location.href='/'"><ion-icon name="home"></ion-icon></button>
+        <button class="btn-circle" id="page-back"><ion-icon name="chevron-back"></ion-icon></button>
+        <button class="btn-circle" id="page-forward"><ion-icon name="chevron-forward"></ion-icon></button>
+        <button class="btn-circle" id="page-refresh"><ion-icon name="refresh"></ion-icon></button>
+        <button class="btn-circle" id="options-btn"><ion-icon name="grid"></ion-icon></button>
+      </div>
+
+      <div class="search-wrapper">
+        <form id="url-form">
+          <input type="text" id="url-input" placeholder="Search or type URL..." autocomplete="off" />
+        </form>
+        <button id="new-tab"><ion-icon name="add-circle"></ion-icon> NEW TAB</button>
+      </div>
+
+      <div id="tab-list">
+        </div>
+    </aside>
+
+    <main class="main-view">
+      <div id="tab-view" style="width:100%; height:100%;">
+        </div>
+    </main>
+
+    <div id="menu-overlay">
+      <div class="option" id="devtools-option">Developer Tools</div>
+      <div class="option" id="abc-option">Open in about:blank</div>
+      <div class="option" id="git-option">View Source</div>
+    </div>
+
+    <script>
+      const optionsBtn = document.getElementById("options-btn");
+      const overlay = document.getElementById("menu-overlay");
+      optionsBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        overlay.classList.toggle("active");
+      });
+      document.addEventListener("click", () => overlay.classList.remove("active"));
+    </script>
+    <script>window.addEventListener('load', () => {
+  // Check if there is a pending search from the homepage
+  const pendingSearch = localStorage.getItem('autoSearchQuery');
+
+  if (pendingSearch) {
+    const browserInput = document.getElementById('url-input');
+    const browserForm = document.getElementById('url-form');
+
+    if (browserInput && browserForm) {
+      // 1. Fill the browser's URL bar with the text from the homepage
+      browserInput.value = pendingSearch;
+
+      // 2. Clear the memory so it doesn't search again if you refresh
+      localStorage.removeItem('autoSearchQuery');
+
+      // 3. Automatically trigger the "Go" / "Submit" action
+      browserForm.dispatchEvent(new Event('submit'));
+    }
+  }
+});
+    </script>
+  </body>
+</html>
