@@ -133,7 +133,7 @@ const tabItem = (tab) => {
             if (tabs.length) focusTab(tabs[tabs.length - 1]);
             else
               setTimeout(() => {
-                addTab("duckduckgo.com");
+                addTab("");
               }, 100);
           }
 
@@ -248,7 +248,7 @@ async function addTab(link) {
   focusTab(tab);
 }
 
-addTab("");
+addTab("duckduckgo.com");
 
 const urlParams = new URLSearchParams(window.location.search);
 
