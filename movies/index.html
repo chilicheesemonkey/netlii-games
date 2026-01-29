@@ -132,13 +132,22 @@
 <div class="player-container" id="playerContainer">
     <button class="close-btn" id="closeBtn">CLOSE</button>
     <div class="player-header">
-        <div class="player-title" id="playerTitle">TITLE</div>
+        <div class="player-title" id="playerTitle">Loading...</div>
     </div>
+    <div id="seasonEpisodeSelector" class="season-episode-selector" style="display:none>
+        <div class="selector-group">
+        <span>Season:</span>
+        <select id="seasonSelect" class="selector-select></select>
+    </div>
+        <div class="selector-group">
+        <span>Episode:</span>
+        <select id="episodeSelect" class="selector-select></select>
+        </div>
+    </div> 
     <div class="container" style="flex:1; display:flex; align-items:center;">
         <iframe id="playerIframe" class="player-iframe" frameborder="0" allowfullscreen></iframe>
     </div>
-</div>
-
+        
 <div class="bottom-nav">
     <a href="/projects.html" class="nav-item">
         <div class="circle">🕹️</div>
