@@ -9,16 +9,20 @@ const {
 var tabs = [];
 var selectedTab = null;
 
+// UI Elements
 const urlInput = document.getElementById("url-input");
 const tabList = document.getElementById("tab-list");
 const tabView = document.getElementById("tab-view");
 
-// Basic Controls
+// Basic Navigation logic
 document.getElementById("page-back").onclick = () => selectedTab?.view.contentWindow.history.back();
 document.getElementById("page-forward").onclick = () => selectedTab?.view.contentWindow.history.forward();
 document.getElementById("page-refresh").onclick = () => selectedTab?.view.contentWindow.location.reload();
+
+// New Tab logic
 document.getElementById("new-tab").onclick = () => addTab("duckduckgo.com");
 
+// URL Form submission
 document.getElementById("url-form").onsubmit = (e) => {
   e.preventDefault();
   if (selectedTab) navigate(selectedTab, urlInput.value);
@@ -46,32 +50,35 @@ function focusTab(tab) {
 }
 
 async function addTab(link) {
-  // 1. Convert link to Proxy URL
-  let url = await getUV(link);
-  
-  let tab = {
-    url: search(link),
-    proxiedUrl: url,
-    view: iframe({ src: url, class: "tab-frame", style: "display: none;" })
-  };
+  try {
+    const url = await getUV(link);
+    
+    let tab = {
+      url: search(link),
+      proxiedUrl: url,
+      view: iframe({ src: url, class: "tab-frame", style: "display: none;" })
+    };
 
-  // 2. Create the Tab Button
-  tab.item = button({
-      class: "tab-item",
-      onclick: () => focusTab(tab),
-    },
-    span(tab.url.substring(0, 20) + "..."),
-    ionIcon({
-      name: "close-outline",
-      onclick: (e) => { e.stopPropagation(); closeTab(tab); }
-    })
-  );
+    tab.item = button({
+        class: "tab-item hover-focus1",
+        onclick: () => focusTab(tab),
+      },
+      span(tab.url.length > 20 ? tab.url.substring(0, 20) + "..." : tab.url),
+      ionIcon({
+        name: "close-outline",
+        class: "close-icon",
+        onclick: (e) => { e.stopPropagation(); closeTab(tab); }
+      })
+    );
 
-  tabs.push(tab);
-  tabList.appendChild(tab.item);
-  tabView.appendChild(tab.view);
-  
-  focusTab(tab);
+    tabs.push(tab);
+    tabList.appendChild(tab.item);
+    tabView.appendChild(tab.view);
+    
+    focusTab(tab);
+  } catch (err) {
+    console.error("Tab creation failed:", err);
+  }
 }
 
 function closeTab(tab) {
@@ -85,16 +92,21 @@ function closeTab(tab) {
   }
 }
 
-// --- THE STARTUP LOGIC ---
-// This is the only part that cares about the homepage search
-const startBrowser = () => {
-    const query = localStorage.getItem('autoSearchQuery');
-    if (query) {
-        localStorage.removeItem('autoSearchQuery'); // Clear it immediately
-        addTab(query);
-    } else {
-        addTab("duckduckgo.com");
-    }
+// --- THE ROBUST STARTUP HANDLER ---
+const init = () => {
+  // 1. Check if a search is waiting from the homepage
+  const query = localStorage.getItem('autoSearchQuery');
+  
+  if (query && query.trim() !== "") {
+    console.log("NETLII: Initializing with homepage search:", query);
+    localStorage.removeItem('autoSearchQuery');
+    addTab(query);
+  } else {
+    // 2. Otherwise, open the default page
+    console.log("NETLII: Initializing with default tab.");
+    addTab("duckduckgo.com");
+  }
 };
 
-startBrowser();
+// Run the initialization immediately
+init();
