@@ -8,28 +8,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QR0J225RDB"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-QR0J225RDB');
-    </script>
-
     <style>
-        /* BASE STYLES - Matching the Netlii aesthetic */
+        /* BASE STYLES & BACKGROUND */
         html, body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh; /* Changed from height: 100vh to allow content growth */
             font-family: 'Nunito', sans-serif;
             background: url('netlii-bg.avif') no-repeat center center fixed;
             background-size: cover;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow: hidden;
+            /* Changed overflow: hidden to allow scrolling */
+            overflow-x: hidden; 
+            overflow-y: auto; 
             color: #1a1a1a;
+            padding-bottom: 120px; /* Space for the fixed bottom nav */
         }
 
         /* TOP BRANDING */
@@ -47,7 +42,7 @@
             color: #000;
         }
 
-        /* MAIN APP PANEL (Glassmorphism effect) */
+        /* MAIN APP PANEL (Glassmorphism) */
         .app-panel {
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(20px);
@@ -60,9 +55,10 @@
             max-width: 700px;
             margin-top: 20px;
             text-align: center;
+            z-index: 1;
         }
 
-        /* SEARCH AREA (Pill shapes) */
+        /* SEARCH AREA */
         .search-area {
             display: flex;
             gap: 10px;
@@ -97,26 +93,28 @@
             color: #000;
         }
 
-        /* IFRAME STYLING */
+        /* VIDEO AREA */
         iframe {
             width: 100%;
-            height: 350px;
+            height: 400px; /* Slightly taller for better viewing */
             border-radius: 20px;
             border: 2px solid #000;
-            display: none; /* Controlled by script.js */
-            margin-top: 15px;
+            background: #000;
+            margin-top: 10px;
         }
 
-        /* BOTTOM DOCK NAVIGATION */
+        /* FIXED BOTTOM DOCK */
         .bottom-nav {
-            position: absolute;
+            position: fixed; /* Changed from absolute to fixed */
             bottom: 30px;
             display: flex;
             gap: 40px;
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.5); /* Lighter for better contrast over content */
             padding: 15px 40px;
             border-radius: 50px;
             backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 100;
         }
 
         .nav-item {
@@ -149,6 +147,7 @@
             .header h1 { font-size: 2rem; }
             .bottom-nav { gap: 15px; padding: 10px 20px; }
             iframe { height: 220px; }
+            body { padding-bottom: 150px; }
         }
     </style>
 </head>
@@ -167,8 +166,10 @@
             <button id="submit" class="watch-btn">WATCH</button>
         </div>
 
-        <div id="video-holder">
-            <iframe id="video" src="" frameborder="0" allowfullscreen></iframe>
+        <div id="video-holder-holder">
+            <div id="video-holder" style="display:none;">
+                <iframe id="video" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
         </div>
     </div>
 
@@ -191,6 +192,39 @@
         </a>
     </div>
 
-    <script src="js/script.js"></script>
+    <script>
+        const base = "https://www.youtube-nocookie.com/embed/";
+        const end = "?wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=light";
+        const strip_timestamps = /\?t=\d+/;
+        
+        var submit = document.getElementById('submit');
+        var urlInput = document.getElementById('url');
+        var video_holder_holder = document.getElementById('video-holder-holder');
+
+        submit.onclick = () => {
+            let link = urlInput.value;
+            if(!link) return;
+
+            let videoId = "";
+            
+            // Smarter ID extraction
+            if (link.includes("v=")) {
+                videoId = link.split("v=")[1].split("&")[0];
+            } else if (link.includes("youtu.be/")) {
+                videoId = link.split("youtu.be/")[1].split("?")[0];
+            } else {
+                videoId = link.replace(strip_timestamps, "").substr(-11);
+            }
+
+            video_holder_holder.innerHTML = ''; 
+            let iframe = document.createElement('iframe');
+            iframe.src = base + videoId + end;
+            iframe.setAttribute('allowfullscreen', '');
+            iframe.setAttribute('frameborder', '0');
+            video_holder_holder.appendChild(iframe);
+        }
+
+        urlInput.addEventListener("keypress", (e) => { if (e.key === "Enter") submit.click(); });
+    </script>
 </body>
 </html>
