@@ -14,7 +14,7 @@ Welcome to Netlii, my (second) flagship gaming website. (0K3A being my first)
 - i am a beginner
 - please support the project (star, fork, make you own link)
   
--## MYOL (make your own link)
+## MYOL (make your own link)
 - make github account
 - fork this repo (pls star too)
 - make a vercel account (or any provider of ur choice)
